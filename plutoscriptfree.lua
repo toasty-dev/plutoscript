@@ -187,117 +187,94 @@ AimbotTab:AddSlider({
 
 --ESP
 local ESP = Window:MakeTab({
-	Name = "ESP",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
+    Name = "ESP",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
 })
 
 local Section = ESP:AddSection({
-	Name = "ESP"
+    Name = "ESP"
 })
 
 ESP:AddToggle({
-    Name = "esp",
+    Name = "ESP Enabled",
     Default = false,
-    Callback = function(esp)
-        local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-
--- Box Settings
-local BoxSettings = {
-    BoxEnabled = esp,
-    BoxColor = Color3.fromRGB(0, 255, 0),
-    BoxTransparency = 0.5,
-    BoxThickness = 0.05, -- Adjust this value to control the thickness of the box
-    Margin = 2, -- Margin percentage to add around the player
-}
-
--- Function to create or update box for a player
-local function createOrUpdateBox(player)
-    pcall(function()
-        if player.Character and player.Character:IsDescendantOf(game.Workspace) then
-            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
-            if humanoid and humanoid.Health > 0 then
-                local head = player.Character:FindFirstChild("Head")
-                local torso = player.Character:FindFirstChild("UpperTorso") or player.Character:FindFirstChild("Torso")
-                if head and torso then
-                    local torsoPos = torso.Position
-                    local headPos = head.Position
-                    local direction = (headPos - torsoPos).unit
-                    local distance = (headPos - torsoPos).magnitude
-                    local margin = distance * BoxSettings.Margin
-                    local boxSize = Vector3.new(distance + margin, distance * 2 + margin, BoxSettings.BoxThickness)
-                    
-                    local box = player.Character:FindFirstChild("Box")
-                    if not box then
-                        box = Instance.new("BoxHandleAdornment")
-                        box.Name = "Box"
-                        box.Adornee = player.Character
-                        box.Size = boxSize
-                        box.AlwaysOnTop = true
-                        box.ZIndex = 5
-                        box.Color3 = BoxSettings.BoxColor
-                        box.Transparency = BoxSettings.BoxTransparency
-                        box.Visible = true
-                        box.Parent = player.Character
-                    else
-                        box.Size = boxSize
-                    end
-                end
-            else
-                removeBox(player)
-            end
-        else
-            removeBox(player)
-        end
-    end)
-end
-
--- Function to remove box for a player
-local function removeBox(player)
-    pcall(function()
-        local box = player.Character and player.Character:FindFirstChild("Box")
-        if box then
-            box:Destroy()
-        end
-    end)
-end
-
--- Toggle Box functionality
-local function toggleBox()
-    BoxSettings.BoxEnabled = not BoxSettings.BoxEnabled
-    if not BoxSettings.BoxEnabled then
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer then
-                removeBox(player)
-            end
-        end
-    end
-end
-
--- Connect input to toggle Box
-UserInputService.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.E then
-        toggleBox()
-    end
-end)
-
--- Main loop to update Box
-RunService.Heartbeat:Connect(function()
-    if BoxSettings.BoxEnabled then
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer then
-                createOrUpdateBox(player)
-            end
-        end
-    end
-end)
-        end)
-    end    
+    Callback = function(enabledtggl)
+			-- Roblox Services
+		local Players = game:GetService("Players")
+		local RunService = game:GetService("RunService")
+		
+		-- Chams Settings
+		local ChamsSettings = {
+		    ChamsEnabled = false,
+		    ChamsColor = Color3.fromRGB(0, 255, 0),
+		    ChamsTransparency = 0.5,
+		}
+		
+		-- Function to create or update chams for a player's torso
+		local function createOrUpdateChams(player)
+		    local character = player.Character
+		    if character then
+		        local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
+		        if torso then
+		            local chams = torso:FindFirstChild("Chams")
+		            if ChamsSettings.ChamsEnabled then
+		                if not chams then
+		                    chams = Instance.new("BoxHandleAdornment")
+		                    chams.Name = "Chams"
+		                    chams.Size = torso.Size
+		                    chams.Adornee = torso
+		                    chams.AlwaysOnTop = true
+		                    chams.ZIndex = 5
+		                    chams.Color3 = ChamsSettings.ChamsColor
+		                    chams.Transparency = ChamsSettings.ChamsTransparency
+		                    chams.Visible = true
+		                    chams.Parent = torso
+		                else
+		                    chams.Visible = true
+		                end
+		            else
+		                if chams then
+		                    chams.Visible = false
+		                end
+		            end
+		        end
+		    end
+		end
+		
+		-- Toggle Chams functionality
+		local function toggleChams(enabled)
+		    ChamsSettings.ChamsEnabled = enabled
+		    if not ChamsSettings.ChamsEnabled then
+		        -- Disable chams
+		        for _, player in ipairs(Players:GetPlayers()) do
+		            local character = player.Character
+		            if character then
+		                local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
+		                if torso then
+		                    local chams = torso:FindFirstChild("Chams")
+		                    if chams then
+		                        chams.Visible = false
+		                    end
+		                end
+		            end
+		        end
+		    end
+		end
+		
+		-- Main loop to update Chams
+		RunService.RenderStepped:Connect(function()
+		    if ChamsSettings.ChamsEnabled then
+		        for _, player in ipairs(Players:GetPlayers()) do
+		            createOrUpdateChams(player)
+		        end
+		    end
+		end)
+		
+		-- Example of how to toggle chams using a callback function
+		toggleChams(enabledtggl) -- Initially enable chams
+	end
 })
-
 --Gun Mods
 local Gunmods = Window:MakeTab({
 	Name = "Gun Mods",
