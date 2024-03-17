@@ -322,22 +322,6 @@ Gunmods:AddButton({
   	end    
 })
 
-Gunmods:AddButton({
-	Name = "No Spread",
-	Callback = function()
-		getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Client.Functions.Weapons).currentspread = 0
-  	end    
-})
-
-Gunmods:AddButton({
-	Name = "Trigger Bot",
-	Callback = function()
-		if mouseGet.Target.Parent:FindFirstChild("Humanoid") and mouseGet.Target.Parent.Name ~= player.Name and game.Players:GetPlayerFromCharacter(mouseGet.Target.Parent).Team ~= player.Team then
-            mouse1press() wait(0.09) mouse1release()
-        end
-  	end    
-})
-
 
 
 
